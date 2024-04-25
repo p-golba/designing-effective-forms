@@ -28,8 +28,7 @@ function getCountryByIP() {
     fetch('https://get.geojs.io/v1/ip/geo.json')
         .then(response => response.json())
         .then(data => {
-            const country = data.country;
-            document.getElementById('countryName').textContent = country;
+            document.getElementById('country').value = data.country;
         })
         .catch(error => {
             console.error('Błąd pobierania danych z serwera GeoJS:', error);
@@ -37,7 +36,7 @@ function getCountryByIP() {
 }
 
 function getCountryCode() {
-    const countryName = document.getElementById('countryName').textContent;
+    const countryName = document.getElementById('country').value;
     const apiUrl = `https://restcountries.com/v3.1/name/${countryName}?fullText=true`;
 
     fetch(apiUrl)
@@ -47,8 +46,10 @@ function getCountryCode() {
         }
         return response.json();
     })
-    .then(data => {        
+    .then(data => {
+        console.log(data)
         const countryCode = data[0].idd.root + data[0].idd.suffixes.join("")
+        document.getElementById('countryCode').textContent = countryCode;
     })
     .catch(error => {
         console.error('Wystąpił błąd:', error);
@@ -56,9 +57,11 @@ function getCountryCode() {
 }
 
 
-(() => {
+(async () => {
     // nasłuchiwania na zdarzenie kliknięcia myszką
     document.addEventListener('click', handleClick);
     
-    fetchAndFillCountries();
+    await fetchAndFillCountries();
+    getCountryByIP();
+    getCountryCode();
 })()
